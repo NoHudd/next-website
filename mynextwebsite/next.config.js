@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost', '127.0.0.1'],
     remotePatterns: [
       {
         protocol: 'http',
@@ -20,9 +19,13 @@ const nextConfig = {
         pathname: '/uploads/**',
       }
     ],
-    // Enable CDN optimization
-    minimumCacheTTL: 60,
+    // Optimize image loading and caching
+    minimumCacheTTL: 3600,
     formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   // Production optimizations
   compress: true,
