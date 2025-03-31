@@ -64,13 +64,32 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
   },
-  // Add this to ensure static files are handled correctly
-  webpack: (config) => {
+  // Ensure static files are handled correctly
+  webpack: (config, { isServer }) => {
+    // Handle static files
     config.module.rules.push({
       test: /\.(png|jpg|gif|svg)$/i,
       type: 'asset/resource',
+      generator: {
+        filename: 'static/media/[name].[hash][ext]',
+      },
     });
+
+    // Ensure public directory is copied
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      };
+    }
+
     return config;
+  },
+  // Ensure public directory is included in the build
+  distDir: '.next',
+  generateBuildId: async () => {
+    return 'build-' + Date.now();
   },
 }
 

@@ -3,25 +3,25 @@ import { useState, useEffect, useRef } from 'react';
 import WatermarkOverlay from './ui/watermark-overlay';
 
 const images = [
-  '/assets/img/portfolio/img1.jpg',
-  '/assets/img/portfolio/img2.jpeg',
-  '/assets/img/portfolio/img3.png',
-  '/assets/img/portfolio/img4.png',
-  '/assets/img/portfolio/img5.png',
-  '/assets/img/portfolio/img6.png',
-  '/assets/img/portfolio/img7.png',
-  '/assets/img/portfolio/img8.png',
-  '/assets/img/portfolio/img9.png',
-  '/assets/img/portfolio/img10.png',
-  '/assets/img/portfolio/img11.png',
-  '/assets/img/portfolio/img12.png',
-  '/assets/img/portfolio/img13.png',
-  '/assets/img/portfolio/img14.png',
-  '/assets/img/portfolio/img15.png',
-  '/assets/img/portfolio/img16.png',
-  '/assets/img/portfolio/img17.png',
-  '/assets/img/portfolio/img18.png',
-  '/assets/img/portfolio/img19.png',
+  'img1.jpg',
+  'img2.jpeg',
+  'img3.png',
+  'img4.png',
+  'img5.png',
+  'img6.png',
+  'img7.png',
+  'img8.png',
+  'img9.png',
+  'img10.png',
+  'img11.png',
+  'img12.png',
+  'img13.png',
+  'img14.png',
+  'img15.png',
+  'img16.png',
+  'img17.png',
+  'img18.png',
+  'img19.png',
 ];
 
 export default function PhotographyPortfolio() {
@@ -133,7 +133,7 @@ export default function PhotographyPortfolio() {
             }`}
           >
             <Image
-              src={src}
+              src={`/assets/img/portfolio/${src}`}
               alt={`Photography Portfolio Image ${index + 1}`}
               fill
               className="object-cover select-none pointer-events-none"
@@ -162,7 +162,7 @@ export default function PhotographyPortfolio() {
             <div className="relative w-full h-full max-w-[90vw] max-h-[90vh] flex items-center justify-center">
               <div className="relative w-full h-full rounded-2xl overflow-hidden">
                 <Image
-                  src={images[currentIndex]}
+                  src={`/assets/img/portfolio/${images[currentIndex]}`}
                   alt={`Enlarged Photography Portfolio Image ${currentIndex + 1}`}
                   fill
                   className="object-contain select-none pointer-events-none"
