@@ -25,6 +25,7 @@
     "nodemailer": "^6.10.0",
     "preline": "^3.0.1",
     "react-dom": "^18",
+    "sharp": "^0.33.5",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7"
   },
