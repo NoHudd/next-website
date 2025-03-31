@@ -19,7 +19,7 @@ const nextConfig = {
         pathname: '/uploads/**',
       }
     ],
-    // Optimize image loading and caching
+    // Basic image optimization settings
     minimumCacheTTL: 3600,
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -68,7 +68,7 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     // Handle static files
     config.module.rules.push({
-      test: /\.(png|jpg|gif|svg)$/i,
+      test: /\.(png|jpg|jpeg|gif|svg)$/i,
       type: 'asset/resource',
       generator: {
         filename: 'static/media/[name].[hash][ext]',
