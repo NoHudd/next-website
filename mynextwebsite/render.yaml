@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: dmyproduct-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_STRAPI_URL
+        sync: false
+      - key: STRAPI_API_TOKEN
+        sync: false
+      - key: NEXT_PUBLIC_GA_ID
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_APP_PASSWORD
+        sync: false
+    healthCheckPath: /
+    autoDeploy: true
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /api/*
+        name: Cache-Control
+        value: no-store, no-cache, must-revalidate 
