@@ -64,6 +64,14 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
   },
+  // Add this to ensure static files are handled correctly
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(png|jpg|gif|svg)$/i,
+      type: 'asset/resource',
+    });
+    return config;
+  },
 }
 
 module.exports = nextConfig 
