@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -10,7 +10,17 @@ import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://duhonyoung.com'),
   title: "Duhon Young -- DY Productions",
   description: "Full Stack Developer & Graphic Designer",
   keywords: "web development, full stack developer, graphic design, portfolio",
@@ -27,7 +37,7 @@ export const metadata: Metadata = {
     description: "Full Stack Developer & Graphic Designer",
     images: [
       {
-        url: "/og-image.jpg", // Make sure to add this image to your public folder
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Duhon Young Portfolio",
@@ -38,13 +48,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Duhon Young -- DY Productions",
     description: "Full Stack Developer & Graphic Designer",
-    images: ["/og-image.jpg"], // Make sure to add this image to your public folder
+    images: ["/og-image.jpg"],
   },
-  viewport: "width=device-width, initial-scale=1",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
 };
 
 export default function RootLayout({
