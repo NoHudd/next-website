@@ -88,14 +88,26 @@ export async function fetchAPI<T>(
 
   try {
     console.log(`Fetching from Strapi: ${STRAPI_URL}/api/${endpoint}`);
+    console.log('Authorization header present:', !!STRAPI_API_TOKEN);
+    console.log('First 8 chars of token:', STRAPI_API_TOKEN.substring(0, 8) + '...');
+    
     const response = await fetch(`${STRAPI_URL}/api/${endpoint}`, mergedOptions);
     console.log(`Strapi response status: ${response.status}`);
     
+    if (response.status === 403) {
+      console.error('Received 403 Forbidden from Strapi. This usually means the API token is invalid or lacks proper permissions.');
+      throw new Error('Forbidden: Please check API token permissions');
+    }
+
     const data = await response.json();
-    console.log('Strapi response data:', data);
 
     if (!response.ok) {
-      console.error('Strapi API Error:', data.error?.message || `API Error: ${response.status}`);
+      console.error('Strapi API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: data.error,
+        url: `${STRAPI_URL}/api/${endpoint}`
+      });
       throw new Error(data.error?.message || `API Error: ${response.status}`);
     }
 
