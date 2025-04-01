@@ -66,6 +66,7 @@ export async function fetchAPI<T>(
   options: RequestInit = {}
 ): Promise<T> {
   if (!STRAPI_API_TOKEN) {
+    console.error('STRAPI_API_TOKEN is not defined');
     throw new Error('STRAPI_API_TOKEN is not defined');
   }
 
@@ -86,29 +87,46 @@ export async function fetchAPI<T>(
   };
 
   try {
+    console.log(`Fetching from Strapi: ${STRAPI_URL}/api/${endpoint}`);
     const response = await fetch(`${STRAPI_URL}/api/${endpoint}`, mergedOptions);
+    console.log(`Strapi response status: ${response.status}`);
+    
     const data = await response.json();
+    console.log('Strapi response data:', data);
 
     if (!response.ok) {
+      console.error('Strapi API Error:', data.error?.message || `API Error: ${response.status}`);
       throw new Error(data.error?.message || `API Error: ${response.status}`);
     }
 
     return data;
   } catch (error) {
+    console.error('Error in fetchAPI:', error);
     throw error;
   }
 }
 
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
-    const response = await fetchAPI<{ data: any[] }>('blog-posts?populate=*');
-    
-    if (!response.data) {
+    if (!STRAPI_URL) {
+      console.error('STRAPI_URL is not defined');
       return [];
     }
 
+    console.log('Current STRAPI_URL:', STRAPI_URL);
+    console.log('Fetching blog posts from:', `${STRAPI_URL}/api/blog-posts?populate=*`);
+    
+    const response = await fetchAPI<{ data: any[] }>('blog-posts?populate=*');
+    
+    if (!response.data) {
+      console.error('No data received from Strapi. Response:', response);
+      return [];
+    }
+
+    console.log(`Received ${response.data.length} blog posts`);
     const transformedPosts = response.data.map(post => {
       if (!post.title || !post.slug || !post.content) {
+        console.error('Invalid post data:', post);
         return null;
       }
 
@@ -122,7 +140,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
           publisheddate: post.publisheddate,
           featuredimage: post.featuredimage,
           author: post.author,
-          category: post.catagory,
+          category: post.category,
           tags: post.tags
         }
       };
@@ -130,8 +148,18 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
       return transformedPost;
     }).filter((post): post is BlogPost => post !== null);
 
+    console.log(`Successfully transformed ${transformedPosts.length} blog posts`);
     return transformedPosts;
   } catch (error) {
+    console.error('Error fetching blog posts:', error);
+    // Log the full error details
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
     return [];
   }
 }
@@ -156,7 +184,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
         publisheddate: post.publisheddate,
         featuredimage: post.featuredimage,
         author: post.author,
-        category: post.catagory,
+        category: post.category,
         tags: post.tags
       }
     };

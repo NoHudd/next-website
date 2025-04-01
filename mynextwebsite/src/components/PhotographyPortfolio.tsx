@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
-// import WatermarkOverlay from './ui/watermark-overlay';  // Comment this out temporarily
 
 const images = [
   'img1.jpg',
@@ -144,7 +143,6 @@ export default function PhotographyPortfolio() {
               draggable={false}
               unoptimized={true}
             />
-            {/* <WatermarkOverlay /> */}
           </div>
         ))}
       </div>
@@ -173,7 +171,6 @@ export default function PhotographyPortfolio() {
                   draggable={false}
                   unoptimized={true}
                 />
-                {/* <WatermarkOverlay /> */}
               </div>
             </div>
             <button
