@@ -50,11 +50,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <span className="mx-2">•</span>
               <span>{readingTime} min read</span>
             </div>
-            {featuredimage?.[0]?.url && (
+            {featuredimage?.data?.attributes?.url && (
               <div className="relative h-[500px] w-full mb-12 rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${featuredimage[0].url}`}
-                  alt={featuredimage[0].alternativeText || title}
+                  src={`${process.env.NEXT_PUBLIC_STRAPI_URL}${featuredimage.data.attributes.url}`}
+                  alt={featuredimage.data.attributes.alternativeText || title}
                   fill
                   className="object-cover"
                   priority
