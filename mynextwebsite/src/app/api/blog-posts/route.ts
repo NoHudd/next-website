@@ -24,7 +24,6 @@ export async function GET() {
         'Authorization': `Bearer ${STRAPI_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      cache: 'no-store',
     });
 
     console.log(`Strapi response status: ${response.status}`);

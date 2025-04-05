@@ -3,6 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import Intro from "@/components/Intro";
 import AnimatedSection from "@/components/ui/animated-section";
+
+// Enable Incremental Static Regeneration with a revalidation period of 60 seconds
+export const revalidate = 60;
+
 export default async function BlogPage() {
   const posts = await getAllBlogPosts();
 
@@ -20,9 +24,8 @@ export default async function BlogPage() {
           <div className="lg:col-span-2 bg-white dark:bg-black rounded-xl p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {posts.map((post) => {
-                const firstImage = post.attributes.featuredimage?.[0];
-                const imageUrl = firstImage
-                  ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`
+                const imageUrl = post.attributes.featuredimage?.data?.attributes?.url
+                  ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${post.attributes.featuredimage.data.attributes.url}`
                   : '/placeholder-image.jpg';
 
                 return (
@@ -35,7 +38,7 @@ export default async function BlogPage() {
                       <div className="relative h-48 w-full bg-gray-100 dark:bg-gray-800">
                         <Image
                           src={imageUrl}
-                          alt={firstImage?.alternativeText || post.attributes.title || 'Blog post image'}
+                          alt={post.attributes.featuredimage?.data?.attributes?.alternativeText || post.attributes.title || 'Blog post image'}
                           fill
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
