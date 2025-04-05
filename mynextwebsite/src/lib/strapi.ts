@@ -7,20 +7,15 @@ export interface BlogPost {
     title: string;
     slug: string;
     content: string;
-    featuredimage: Array<{
-      id: number;
-      name: string;
-      alternativeText: string | null;
-      width: number;
-      height: number;
-      formats: {
-        thumbnail: ImageFormat;
-        small: ImageFormat;
-        medium: ImageFormat;
-        large: ImageFormat;
+    description?: string;
+    featuredimage?: {
+      data?: {
+        attributes: {
+          url: string;
+          alternativeText?: string;
+        };
       };
-      url: string;
-    }>;
+    };
     author?: {
       data?: {
         attributes: {
@@ -120,15 +115,15 @@ export async function fetchAPI<T>(
 
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
   try {
-    if (!STRAPI_URL) {
-      console.error('STRAPI_URL is not defined');
+    if (!STRAPI_API_TOKEN) {
+      console.error('STRAPI_API_TOKEN is not defined');
       return [];
     }
 
     console.log('Current STRAPI_URL:', STRAPI_URL);
     console.log('Fetching blog posts from:', `${STRAPI_URL}/api/blog-posts?populate=*`);
     
-    const response = await fetchAPI<{ data: any[] }>('blog-posts?populate=*');
+    const response = await fetchAPI<{ data: BlogPost[] }>('blog-posts?populate=*');
     
     if (!response.data) {
       console.error('No data received from Strapi. Response:', response);
@@ -136,73 +131,32 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
     }
 
     console.log(`Received ${response.data.length} blog posts`);
-    const transformedPosts = response.data.map(post => {
-      if (!post.title || !post.slug || !post.content) {
-        console.error('Invalid post data:', post);
-        return null;
-      }
-
-      const transformedPost: BlogPost = {
-        id: post.id,
-        attributes: {
-          title: post.title,
-          slug: post.slug,
-          content: post.content,
-          publishedAt: post.publishedAt,
-          publisheddate: post.publisheddate,
-          featuredimage: post.featuredimage,
-          author: post.author,
-          category: post.category,
-          tags: post.tags
-        }
-      };
-
-      return transformedPost;
-    }).filter((post): post is BlogPost => post !== null);
-
-    console.log(`Successfully transformed ${transformedPosts.length} blog posts`);
-    return transformedPosts;
+    return response.data;
   } catch (error) {
     console.error('Error fetching blog posts:', error);
-    // Log the full error details
-    if (error instanceof Error) {
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-    }
     return [];
   }
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    const response = await fetchAPI<{ data: any[] }>(`blog-posts?filters[slug][$eq]=${slug}&populate=*`);
-    
-    if (!response.data || response.data.length === 0) {
+    if (!STRAPI_API_TOKEN) {
+      console.error('STRAPI_API_TOKEN is not defined');
       return null;
     }
 
-    const post = response.data[0];
+    console.log(`Fetching blog post with slug: ${slug}`);
+    const response = await fetchAPI<{ data: BlogPost[] }>(`blog-posts?filters[slug][$eq]=${slug}&populate=*`);
+    
+    if (!response.data || response.data.length === 0) {
+      console.error(`No blog post found with slug: ${slug}`);
+      return null;
+    }
 
-    const transformedPost: BlogPost = {
-      id: post.id,
-      attributes: {
-        title: post.title,
-        slug: post.slug,
-        content: post.content,
-        publishedAt: post.publishedAt,
-        publisheddate: post.publisheddate,
-        featuredimage: post.featuredimage,
-        author: post.author,
-        category: post.category,
-        tags: post.tags
-      }
-    };
-
-    return transformedPost;
+    console.log(`Found blog post with slug: ${slug}`);
+    return response.data[0];
   } catch (error) {
+    console.error(`Error fetching blog post with slug: ${slug}`, error);
     return null;
   }
 } 

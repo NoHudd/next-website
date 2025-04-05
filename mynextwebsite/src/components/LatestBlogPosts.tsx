@@ -19,8 +19,11 @@ export default function LatestBlogPosts() {
           throw new Error('Failed to fetch blog posts');
         }
         const data = await response.json();
-        setPosts(data.slice(0, 2));
+        console.log('Fetched blog posts data:', data);
+        // Strapi returns data in a format like { data: [{ id, attributes }, ...] }
+        setPosts(data.data || []);
       } catch (error) {
+        console.error('Error fetching blog posts:', error);
         setError('Failed to load blog posts. Please try again later.');
       } finally {
         setLoading(false);
@@ -76,48 +79,44 @@ export default function LatestBlogPosts() {
       </div>
 
       <div className="space-y-8">
-        {posts.map((post) => {
-          const firstImage = post.attributes.featuredimage?.[0];
-          const imageUrl = firstImage
-            ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${firstImage.url}`
-            : '/images/portfolio/placeholder-image.jpg';
+        {posts.length === 0 ? (
+          <p className="text-gray-500 dark:text-gray-400">No blog posts found.</p>
+        ) : (
+          posts.slice(0, 2).map((post) => {
+            const imageUrl = post.attributes.featuredimage?.data?.attributes?.url
+              ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${post.attributes.featuredimage.data.attributes.url}`
+              : '/images/portfolio/placeholder-image.jpg';
 
-          return (
-            <Link
-              key={post.id}
-              href={`/blog/${post.attributes.slug}`}
-              className="group block transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg dark:hover:shadow-primary/30 rounded-xl"
-            >
-              <article className="overflow-hidden rounded-xl bg-gray-50 transition-all duration-300 hover:shadow-lg dark:bg-gray-800/50">
-                <div className="aspect-[16/9] w-full relative">
-                  <Image
-                    src={imageUrl}
-                    alt={firstImage?.alternativeText || post.attributes.title || 'Blog post image'}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
-                    className="object-cover"
-                    priority={true}
-                  />
-                </div>
-                <div className="p-4">
-                  <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
-                    {post.attributes.title}
-                  </h4>
-                  <div className="flex flex-wrap gap-2 items-center text-sm text-gray-600 dark:text-gray-400">
-                    {post.attributes.category?.data?.attributes?.name && (
-                      <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
-                        {post.attributes.category.data.attributes.name}
-                      </span>
-                    )}
-                    <span>
-                      {new Date(post.attributes.publisheddate || post.attributes.publishedAt).toLocaleDateString()}
-                    </span>
+            return (
+              <Link
+                key={post.id}
+                href={`/blog/${post.attributes.slug}`}
+                className="group block transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg dark:hover:shadow-primary/30 rounded-xl"
+              >
+                <article className="overflow-hidden rounded-xl bg-gray-50 transition-all duration-300 hover:shadow-lg dark:bg-gray-800/50">
+                  <div className="aspect-[16/9] w-full relative">
+                    <Image
+                      src={imageUrl}
+                      alt={post.attributes.title || 'Blog post image'}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px"
+                      className="object-cover"
+                      priority={true}
+                    />
                   </div>
-                </div>
-              </article>
-            </Link>
-          );
-        })}
+                  <div className="p-4">
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-light group-hover:text-primary dark:group-hover:text-primary">
+                      {post.attributes.title}
+                    </h4>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                      {post.attributes.description || post.attributes.content.substring(0, 150) + '...'}
+                    </p>
+                  </div>
+                </article>
+              </Link>
+            );
+          })
+        )}
       </div>
     </div>
   );
